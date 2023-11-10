@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Klinkby.Borigo2iCal.Function": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7082",
+      "launchBrowser": false
+    }
+  }
+}
