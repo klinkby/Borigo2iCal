@@ -31,9 +31,6 @@ public static class Bookings
             handler = new BookingsQueryHandler(subdomain, rememberUserToken, log);
             if (!int.TryParse(GetRequiredEnv("FACILITY_ID"), out var facilityId))
                 throw new InvalidOperationException("FACILITY_ID not a number");
-            // if (!DateTimeOffset.TryParse(parameters.Date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind,
-            //         out var dateValue))
-            //     dateValue = DateTimeOffset.Now.Date;
             query = new BookingsQuery(facilityId, parameters.Date);
         }
         catch (InvalidOperationException e)
