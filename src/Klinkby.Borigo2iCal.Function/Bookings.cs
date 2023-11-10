@@ -15,14 +15,13 @@ public static class Bookings
 {
     [FunctionName("Bookings")]
     public static Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Function, "get")]
-        HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest _,
         ILogger log,
-        [FromQuery] DateTimeOffset? date = default,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken,
+        [FromQuery] DateTimeOffset? date = default
     )
     {
-        log.LogInformation("C# HTTP trigger function processed a request.");
+        log.LogInformation("Request starting");
         BookingsQuery query;
         BookingsQueryHandler handler;
         try
