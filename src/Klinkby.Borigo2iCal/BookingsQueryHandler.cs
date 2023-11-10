@@ -6,9 +6,9 @@ namespace Klinkby.Borigo2iCal;
 
 public class BookingsQueryHandler : IQueryHandler<BookingsQuery, BookingsResponse>
 {
-    private readonly string _subdomain;
-    private readonly string _rememberUserToken;
     private readonly ILogger _log;
+    private readonly string _rememberUserToken;
+    private readonly string _subdomain;
 
     public BookingsQueryHandler(string subdomain, string rememberUserToken, ILogger log)
     {
@@ -20,7 +20,7 @@ public class BookingsQueryHandler : IQueryHandler<BookingsQuery, BookingsRespons
     public Task<BookingsResponse> ExecuteQueryAsync(BookingsQuery query, CancellationToken cancellationToken)
     {
         var client = new RestClient($"https://{_subdomain}.borigo.com");
-        var req = new RestRequest("booking-engine/bookings.json", Method.Get);
+        var req = new RestRequest("booking-engine/bookings.json");
         req.AddHeader("cookie", $"remember_user_token={_rememberUserToken}");
         req.AddParameter("facility_id", query.FacilityId, ParameterType.QueryString);
         req.AddParameter("date", query.Date.ToString("yyyy-MM-dd"), ParameterType.QueryString);
@@ -31,7 +31,8 @@ public class BookingsQueryHandler : IQueryHandler<BookingsQuery, BookingsRespons
             return ValueTask.CompletedTask;
         };
         return client.ExecuteAsync<BookingsResponse>(req, cancellationToken)
-            .ContinueWith(x => { 
+            .ContinueWith(x =>
+            {
                 _log.LogInformation("Status {statusCode}", x.Result.StatusCode);
                 return x.Result.ResponseStatus == ResponseStatus.Error
                     ? x.IsFaulted ? throw x.Exception! : throw x.Result.ErrorException!

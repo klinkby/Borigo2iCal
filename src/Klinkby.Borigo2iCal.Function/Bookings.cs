@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -11,11 +10,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Klinkby.Borigo2iCal.Function;
-
-public record GetBookingsParameters
-{
-    public DateTime Date { get; init; } = DateTime.Now.Date;
-}
 
 public static class Bookings
 {
@@ -47,6 +41,7 @@ public static class Bookings
             log.LogWarning(e, e.Message);
             return Task.FromResult((IActionResult)new BadRequestObjectResult(e.Message));
         }
+
         return handler.ExecuteQueryAsync(query, cancellationToken)
             .ContinueWith(t => MapQueryResult(log, t), cancellationToken);
     }
@@ -68,6 +63,11 @@ public static class Bookings
         }
 
         log.LogInformation("Returning bookings");
-        return new OkObjectResult(t.Result);
+        return new ContentResult
+        {
+            Content = t.Result.ToVCalendar().ToString(),
+            ContentType = "text/calendar",
+            StatusCode = StatusCodes.Status200OK
+        };
     }
 }
