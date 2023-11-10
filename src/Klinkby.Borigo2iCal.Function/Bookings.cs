@@ -15,10 +15,10 @@ public static class Bookings
 {
     [FunctionName("Bookings")]
     public static Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest _,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
         ILogger log,
         CancellationToken cancellationToken,
-        [FromQuery] DateTimeOffset? date = default
+        [FromQuery] DateTime? date = default
     )
     {
         log.LogInformation("Request starting");
@@ -33,7 +33,7 @@ public static class Bookings
             handler = new BookingsQueryHandler(subdomain, rememberUserToken);
             if (!int.TryParse(Environment.GetEnvironmentVariable("FACILITY_ID") ?? null, out var facilityId))
                 throw new InvalidOperationException("FACILITY_ID not set");
-            date ??= DateTimeOffset.Now;
+            date ??= DateTime .Now;
             query = new BookingsQuery(facilityId, date.Value);
         }
         catch (InvalidOperationException e)
