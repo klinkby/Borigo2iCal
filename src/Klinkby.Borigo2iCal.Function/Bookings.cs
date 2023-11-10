@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -11,14 +12,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Klinkby.Borigo2iCal.Function;
 
+public record GetBookingsParameters
+{
+    public DateTime Date { get; init; } = DateTime.Now.Date;
+}
+
 public static class Bookings
 {
     [FunctionName("Bookings")]
     public static Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] //HttpRequest req,
+        GetBookingsParameters parameters,
         ILogger log,
-        CancellationToken cancellationToken,
-        [FromQuery] DateTime? date = default
+        CancellationToken cancellationToken
     )
     {
         log.LogInformation("Request starting");
@@ -26,24 +32,30 @@ public static class Bookings
         BookingsQueryHandler handler;
         try
         {
-            var rememberUserToken = Environment.GetEnvironmentVariable("REMEMBER_USER_TOKEN")
-                                    ?? throw new InvalidOperationException("REMEMBER_USER_TOKEN not set");
-            var subdomain = Environment.GetEnvironmentVariable("SUBDOMAIN")
-                            ?? throw new InvalidOperationException("SUBDOMAIN not set");
-            handler = new BookingsQueryHandler(subdomain, rememberUserToken);
-            if (!int.TryParse(Environment.GetEnvironmentVariable("FACILITY_ID") ?? null, out var facilityId))
-                throw new InvalidOperationException("FACILITY_ID not set");
-            date ??= DateTime .Now;
-            query = new BookingsQuery(facilityId, date.Value);
+            var rememberUserToken = GetRequiredEnv("REMEMBER_USER_TOKEN");
+            var subdomain = GetRequiredEnv("SUBDOMAIN");
+            handler = new BookingsQueryHandler(subdomain, rememberUserToken, log);
+            if (!int.TryParse(GetRequiredEnv("FACILITY_ID"), out var facilityId))
+                throw new InvalidOperationException("FACILITY_ID not a number");
+            // if (!DateTimeOffset.TryParse(parameters.Date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind,
+            //         out var dateValue))
+            //     dateValue = DateTimeOffset.Now.Date;
+            query = new BookingsQuery(facilityId, parameters.Date);
         }
         catch (InvalidOperationException e)
         {
             log.LogWarning(e, e.Message);
             return Task.FromResult((IActionResult)new BadRequestObjectResult(e.Message));
         }
-
         return handler.ExecuteQueryAsync(query, cancellationToken)
             .ContinueWith(t => MapQueryResult(log, t), cancellationToken);
+    }
+
+    private static string GetRequiredEnv(string environmentVariableName)
+    {
+        var rememberUserToken = Environment.GetEnvironmentVariable(environmentVariableName)
+                                ?? throw new InvalidOperationException($"{environmentVariableName} not set");
+        return rememberUserToken;
     }
 
     private static IActionResult MapQueryResult(ILogger log, Task<BookingsResponse> t)

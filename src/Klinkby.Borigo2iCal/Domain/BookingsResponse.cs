@@ -32,7 +32,7 @@ public record Booking
 
     [JsonPropertyName("ends_at")] public DateTimeOffset EndsAt { get; set; }
 
-    [JsonPropertyName("booking_type")] public BookingType BookingType { get; set; }
+    [JsonPropertyName("booking_type")] public string BookingType { get; set; }
 
     [JsonPropertyName("description")] public string Description { get; set; }
 
@@ -40,13 +40,13 @@ public record Booking
 
     [JsonPropertyName("deposit")] public long Deposit { get; set; }
 
-    [JsonPropertyName("payment_method")] public PaymentMethod PaymentMethod { get; set; }
+    [JsonPropertyName("payment_method")] public string PaymentMethod { get; set; }
 
     [JsonPropertyName("customer_name")] public string CustomerName { get; set; }
 
     [JsonPropertyName("facility_id")] public long FacilityId { get; set; }
 
-    [JsonPropertyName("status")] public Status Status { get; set; }
+    [JsonPropertyName("status")] public string Status { get; set; }
 
     [JsonPropertyName("created_at")] public DateTimeOffset CreatedAt { get; set; }
 
@@ -94,7 +94,7 @@ public record Responsible
 
     [JsonPropertyName("initials")] public string Initials { get; set; }
 
-    [JsonPropertyName("type")] public TypeEnum Type { get; set; }
+    [JsonPropertyName("type")] public string Type { get; set; }
 
     [JsonPropertyName("path")] public string Path { get; set; }
 
@@ -240,7 +240,7 @@ public record DepositElement
 
     [JsonPropertyName("facility_id")] public long FacilityId { get; set; }
 
-    [JsonPropertyName("booking_type")] public BookingType BookingType { get; set; }
+    [JsonPropertyName("booking_type")] public string BookingType { get; set; }
 
     [JsonPropertyName("criteria")] public string Criteria { get; set; }
 
@@ -249,28 +249,6 @@ public record DepositElement
     [JsonPropertyName("created_at")] public DateTimeOffset CreatedAt { get; set; }
 
     [JsonPropertyName("updated_at")] public DateTimeOffset UpdatedAt { get; set; }
-}
-
-public enum BookingType
-{
-    Community,
-    Resident
-}
-
-public enum PaymentMethod
-{
-    CommunityLedgerPaymentOption
-}
-
-public enum TypeEnum
-{
-    Resident
-}
-
-public enum Status
-{
-    Approved,
-    Cancelled
 }
 
 internal class ParseStringConverter : JsonConverter<long>
