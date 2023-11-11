@@ -17,9 +17,9 @@ Hosted on Azure Functions v4 (Linux) Consumption Plan, the function is triggered
 
 Requires the following App Settings in the Function App:
 
-- `REMEMBER_USER_TOKEN`: The cookie secret value used to authenticate the user with Borigo
-- `SUBDOMAIN`: The subdomain of the Borigo account *(e.g. `https://<SUBDOMAIN>.borigo.dk`)*
-- `FACILITY_ID`: The ID of the facility to fetch bookings from *(e.g. `/booking-engine/bookings?facility_id=<FACILITY_ID>`)*
+- `ApiClient__RememberUserToken`: The cookie secret value used to authenticate the user with Borigo
+- `ApiClient__Subdomain`: The subdomain of the Borigo account *(e.g. `https://<SUBDOMAIN>.borigo.dk`)*
+- `ApiClient__FacilityId`: The ID of the facility to fetch bookings from *(e.g. `/booking-engine/bookings?facility_id=<FACILITY_ID>`)*
 
 
 ## References
