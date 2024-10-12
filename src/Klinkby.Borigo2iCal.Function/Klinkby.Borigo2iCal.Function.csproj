@@ -3,8 +3,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <PublishReadyToRun>true</PublishReadyToRun>
     <RootNamespace>Klinkby.Borigo2iCal.Func</RootNamespace>
   </PropertyGroup>
