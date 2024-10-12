@@ -13,7 +13,7 @@ public partial class BookingsController(
 
     [Function("Bookings")]
     public async Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "bookings/{id}")]
         HttpRequest req,
         int id,
         CancellationToken cancellationToken
