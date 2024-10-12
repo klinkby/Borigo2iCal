@@ -4,5 +4,5 @@ public interface IQueryHandler<in TQuery, TResponse>
     where TQuery : notnull
     where TResponse : notnull
 {
-    Task<TResponse> ExecuteQueryAsync(TQuery request, CancellationToken cancellationToken);
+    Task<TResponse> ExecuteQueryAsync(TQuery query, CancellationToken cancellationToken);
 }

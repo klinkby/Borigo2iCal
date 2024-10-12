@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Klinkby.Borigo2iCal.Function;
+﻿namespace Klinkby.Borigo2iCal.Func;
 
 public record GetBookingsParameters
 {
-    public DateTime Date { get; init; } = DateTime.Now.AddDays(-4).Date;
+    public int Facility { get; init; }
 }

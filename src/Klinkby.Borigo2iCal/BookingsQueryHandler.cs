@@ -1,43 +1,44 @@
-﻿using Klinkby.Borigo2iCal.Domain;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestSharp;
+using RestSharp.Interceptors;
 
 namespace Klinkby.Borigo2iCal;
 
-public class BookingsQueryHandler : IQueryHandler<BookingsQuery, BookingsResponse>
+public class BookingsQueryHandler(
+    IOptions<ApiClientOptions> options,
+    ILogger<BookingsQueryHandler> logger)
+    : IQueryHandler<BookingsQuery, BookingsResponse>
 {
-    private readonly ILogger<BookingsQueryHandler> _log;
-    private readonly ApiClientOptions _options;
+    private readonly ApiClientOptions _options = options.Value;
 
-    public BookingsQueryHandler(
-        IOptions<ApiClientOptions> options, 
-        ILogger<BookingsQueryHandler> log)
+    public async Task<BookingsResponse> ExecuteQueryAsync(BookingsQuery query, CancellationToken cancellationToken)
     {
-        _options = options.Value;
-        _log = log;
+        ArgumentNullException.ThrowIfNull(query);
+
+        using var client = new RestClient($"https://{_options.Subdomain}.spaces.heynabo.com");
+        var req = new RestRequest("api/members/bookings/items/{id}");
+        req.AddUrlSegment("id", query.FacilityId);
+        req.AddHeader("Accept", "application/json");
+        req.AddHeader("Authorization", "Bearer " + _options.RememberUserToken);
+        req.Interceptors = [new LoggingInterceptor(logger)];
+        var res = await client.ExecuteAsync<BookingsResponse>(req, cancellationToken).ConfigureAwait(false);
+        return res.IsSuccessful
+            ? res.Data ?? new BookingsResponse()
+            : throw res.ErrorException ?? new InvalidOperationException("Unexpected");
+    }
+}
+
+public partial class LoggingInterceptor(ILogger logger) : Interceptor
+{
+    private readonly ILogger _logger = logger;
+
+    public override ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken)
+    {
+        LogRequest(requestMessage?.RequestUri?.AbsoluteUri ?? string.Empty);
+        return base.BeforeHttpRequest(requestMessage!, cancellationToken);
     }
 
-    public Task<BookingsResponse> ExecuteQueryAsync(BookingsQuery query, CancellationToken cancellationToken)
-    {
-        var client = new RestClient($"https://{_options.Subdomain}.borigo.com");
-        var req = new RestRequest("booking-engine/bookings.json");
-        req.AddHeader("cookie", $"remember_user_token={_options.RememberUserToken}");
-        req.AddParameter("facility_id", query.FacilityId, ParameterType.QueryString);
-        req.AddParameter("date", query.Date.ToString("yyyy-MM-dd"), ParameterType.QueryString);
-        req.AddParameter("offset", query.Offset, ParameterType.QueryString);
-        req.OnBeforeRequest += request =>
-        {
-            _log.LogInformation("Request {url}", request.RequestUri!.AbsoluteUri);
-            return ValueTask.CompletedTask;
-        };
-        return client.ExecuteAsync<BookingsResponse>(req, cancellationToken)
-            .ContinueWith(x =>
-            {
-                _log.LogInformation("Status {statusCode}", x.Result.StatusCode);
-                return x.Result.ResponseStatus == ResponseStatus.Error
-                    ? x.IsFaulted ? throw x.Exception! : throw x.Result.ErrorException!
-                    : x.Result.Data!;
-            }, cancellationToken);
-    }
+    [LoggerMessage(1, LogLevel.Information, "Fetch {url}")]
+    private partial void LogRequest(string url);
 }

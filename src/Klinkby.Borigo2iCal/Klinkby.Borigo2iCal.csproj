@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <LangVersion>10</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Klinkby.VCard" Version="2.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
-        <PackageReference Include="RestSharp" Version="110.2.0"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Klinkby.VCard" Version="2.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2"/>
+    <PackageReference Include="RestSharp" Version="112.1.0"/>
+  </ItemGroup>
 
 </Project>

@@ -1,64 +1,47 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Klinkby.Borigo2iCal.Domain;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace Klinkby.Borigo2iCal.Function;
+namespace Klinkby.Borigo2iCal.Func;
 
-public class BookingsController
+public partial class BookingsController(
+    IQueryHandler<BookingsQuery, BookingsResponse> handler,
+    ILogger<BookingsController> logger
+)
 {
-    private readonly IQueryHandler<BookingsQuery, BookingsResponse> _handler;
-    private readonly ILogger<BookingsController> _log;
-    private readonly ApiClientOptions _options;
+    private readonly ILogger<BookingsController> _logger = logger;
 
-    public BookingsController(
-        IQueryHandler<BookingsQuery, BookingsResponse> handler,
-        IOptions<ApiClientOptions> options,
-        ILogger<BookingsController> log)
-    {
-        _handler = handler;
-        _log = log;
-        _options = options.Value;
-    }
-
-    [FunctionName("Bookings")]
-    public Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] 
-        GetBookingsParameters parameters,
+    [Function("Bookings")]
+    public async Task<IActionResult> RunAsync(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")]
+        HttpRequest req,
+        int id,
         CancellationToken cancellationToken
     )
     {
-        _log.LogInformation("Request starting");
-        return _handler.ExecuteQueryAsync(
-                new BookingsQuery(_options.FacilityId, parameters.Date), 
-                cancellationToken)
-            .ContinueWith(MapQueryResult);
+        LogRequestStarting(id);
+        var res = await handler.ExecuteQueryAsync(
+            new BookingsQuery(id),
+            cancellationToken).ConfigureAwait(false);
+        return MapQueryResult(res);
     }
 
-    private IActionResult MapQueryResult(Task<BookingsResponse> t)
+    private ContentResult MapQueryResult(BookingsResponse t)
     {
-        if (t.IsFaulted)
-        {
-            var e = t.Exception!;
-            _log.LogError(e, e.Message);
-            return new InternalServerErrorResult();
-        }
-
-        _log.LogInformation("Returning bookings");
+        LogReturningBookings();
         return new ContentResult
         {
             ContentType = "text/calendar",
             StatusCode = StatusCodes.Status200OK,
-            Content = t.Result
-                       .ToVCalendar()
-                       .ToString()
+            Content = t
+                .ToVCalendar()
+                .ToString()
         };
     }
+
+    [LoggerMessage(2, LogLevel.Information, "Returning bookings")]
+    private partial void LogReturningBookings();
+
+    [LoggerMessage(3, LogLevel.Information, "Request starting {Id}")]
+    private partial void LogRequestStarting(int id);
 }
