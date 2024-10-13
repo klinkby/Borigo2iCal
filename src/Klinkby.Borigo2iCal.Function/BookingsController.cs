@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Klinkby.VCard;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Klinkby.Borigo2iCal.Func;
 
 public partial class BookingsController(
-    IQueryHandler<BookingsQuery, BookingsResponse> handler,
-    ILogger<BookingsController> logger
-)
+    IQueryHandler<BookingsQuery, VCalendar> handler,
+    ILogger<BookingsController> logger)
 {
-    private readonly ILogger<BookingsController> _logger = logger;
-
     [Function("Bookings")]
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "bookings/{id}")]
@@ -19,29 +17,21 @@ public partial class BookingsController(
         CancellationToken cancellationToken
     )
     {
-        LogRequestStarting(id);
+        LogRequestStarting(logger, id);
         var res = await handler.ExecuteQueryAsync(
             new BookingsQuery(id),
             cancellationToken).ConfigureAwait(false);
-        return MapQueryResult(res);
+        return Map(res);
     }
 
-    private ContentResult MapQueryResult(BookingsResponse t)
+    private static ContentResult Map(VCalendar t)
     {
-        LogReturningBookings(t.Orders.Length);
         return new ContentResult
         {
-            ContentType = "text/calendar",
-            StatusCode = StatusCodes.Status200OK,
-            Content = t
-                .ToVCalendar()
-                .ToString()
+            ContentType = "text/calendar", StatusCode = StatusCodes.Status200OK, Content = t.ToString()
         };
     }
 
-    [LoggerMessage(2, LogLevel.Information, "Returning {Count} bookings")]
-    private partial void LogReturningBookings(int count);
-
     [LoggerMessage(3, LogLevel.Information, "Request starting {Id}")]
-    private partial void LogRequestStarting(int id);
+    private static partial void LogRequestStarting(ILogger logger, int id);
 }

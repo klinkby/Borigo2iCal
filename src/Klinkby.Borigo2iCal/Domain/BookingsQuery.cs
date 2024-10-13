@@ -1,3 +1,3 @@
 ﻿namespace Klinkby.Borigo2iCal.Domain;
 
-public record BookingsQuery(int FacilityId);
+public sealed record BookingsQuery(int FacilityId);

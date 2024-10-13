@@ -8,12 +8,12 @@ var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices((builder, services) =>
     {
-        services.Configure<JsonSerializerOptions>(options => options.TypeInfoResolver = new FunctionSerializerContext());
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.Configure<ApiClientOptions>(builder.Configuration.GetSection("ApiClient"));
-        services.AddTransient<BookingsQueryHandler>();
-        services.AddTransient<IQueryHandler<BookingsQuery, BookingsResponse>, BookingsQueryHandler>();
+        services.Configure<JsonSerializerOptions>(options =>
+            options.TypeInfoResolver = new FunctionSerializerContext());
+        services.AddHandlers();
     })
     .Build();
 

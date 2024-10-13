@@ -1,18 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Klinkby.VCard;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestSharp;
-using RestSharp.Interceptors;
 
 namespace Klinkby.Borigo2iCal;
 
-public class BookingsQueryHandler(
+[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Late bound")]
+internal sealed partial class BookingsQueryHandler(
     IOptions<ApiClientOptions> options,
     ILogger<BookingsQueryHandler> logger)
-    : IQueryHandler<BookingsQuery, BookingsResponse>
+    : IQueryHandler<BookingsQuery, VCalendar>
 {
     private readonly ApiClientOptions _options = options.Value;
 
-    public async Task<BookingsResponse> ExecuteQueryAsync(BookingsQuery query, CancellationToken cancellationToken)
+    public async Task<VCalendar> ExecuteQueryAsync(BookingsQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
 
@@ -23,22 +25,17 @@ public class BookingsQueryHandler(
         req.AddHeader("Authorization", "Bearer " + _options.RememberUserToken);
         req.Interceptors = [new LoggingInterceptor(logger)];
         var res = await client.ExecuteAsync<BookingsResponse>(req, cancellationToken).ConfigureAwait(false);
+        if (!res.IsSuccessful)
+        {
+            throw res.ErrorException ?? new InvalidOperationException("Unexpected");
+        }
+
+        LogReturningBookings(logger, res.Data?.Orders.Length ?? 0);
         return res.IsSuccessful
-            ? res.Data ?? new BookingsResponse()
+            ? (res.Data ?? new BookingsResponse()).ToVCalendar()
             : throw res.ErrorException ?? new InvalidOperationException("Unexpected");
     }
-}
 
-public partial class LoggingInterceptor(ILogger logger) : Interceptor
-{
-    private readonly ILogger _logger = logger;
-
-    public override ValueTask BeforeHttpRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken)
-    {
-        LogRequest(requestMessage?.RequestUri?.AbsoluteUri ?? string.Empty);
-        return base.BeforeHttpRequest(requestMessage!, cancellationToken);
-    }
-
-    [LoggerMessage(1, LogLevel.Information, "Fetch {url}")]
-    private partial void LogRequest(string url);
+    [LoggerMessage(2, LogLevel.Information, "Returning {Count} bookings")]
+    private static partial void LogReturningBookings(ILogger logger, int count);
 }

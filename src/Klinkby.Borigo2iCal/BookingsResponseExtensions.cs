@@ -3,7 +3,7 @@ using Klinkby.VCard;
 
 namespace Klinkby.Borigo2iCal;
 
-public static class BookingsResponseExtensions
+internal static class BookingsResponseExtensions
 {
     public static VCalendar ToVCalendar(this BookingsResponse bookingsResponse)
     {

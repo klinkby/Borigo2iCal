@@ -2,7 +2,7 @@
 
 namespace Klinkby.Borigo2iCal;
 
-public record ApiClientOptions
+public sealed record ApiClientOptions
 {
     [Required] public required string RememberUserToken { get; init; }
 

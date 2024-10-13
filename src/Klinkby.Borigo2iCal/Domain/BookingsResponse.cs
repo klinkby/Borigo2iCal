@@ -19,7 +19,7 @@ namespace Klinkby.Borigo2iCal.Domain
     using System.Text.Json.Serialization;
     using System.Globalization;
 
-    public partial class BookingsResponse
+    internal partial class BookingsResponse
     {
         [JsonPropertyName("id")]
         public long Id { get; set; }
@@ -76,7 +76,7 @@ namespace Klinkby.Borigo2iCal.Domain
         public Attachment[] Attachments { get; set; }
     }
 
-    public partial class Attachment
+    internal partial class Attachment
     {
         [JsonPropertyName("id")]
         public long Id { get; set; }
@@ -106,7 +106,7 @@ namespace Klinkby.Borigo2iCal.Domain
         public object UpdateTime { get; set; }
     }
 
-    public partial class Availability
+    internal partial class Availability
     {
         [JsonPropertyName("durationPeriod")]
         public long DurationPeriod { get; set; }
@@ -130,7 +130,7 @@ namespace Klinkby.Borigo2iCal.Domain
         public string[] ActiveWeekDays { get; set; }
     }
 
-    public partial class Order
+    internal partial class Order
     {
         [JsonPropertyName("id")]
         public long Id { get; set; }
@@ -157,12 +157,12 @@ namespace Klinkby.Borigo2iCal.Domain
         public DateTimeOffset Created { get; set; }
     }
 
-    public partial class Welcome
+    internal partial class Welcome
     {
         public static Welcome FromJson(string json) => JsonSerializer.Deserialize<Welcome>(json, Klinkby.Borigo2iCal.Domain.Converter.Settings);
     }
 
-    public static class Serialize
+    internal static class Serialize
     {
         public static string ToJson(this Welcome self) => JsonSerializer.Serialize(self, Klinkby.Borigo2iCal.Domain.Converter.Settings);
     }
