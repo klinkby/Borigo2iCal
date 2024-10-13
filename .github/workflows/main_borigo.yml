@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet publish **/Klinkby.Borigo2iCal.Function.csproj --runtime linux-x64 --configuration Release --output ./output
+          dotnet publish src/Klinkby.Borigo2iCal.Function/Klinkby.Borigo2iCal.Function.csproj --runtime linux-x64 --configuration Release --output ./output
           popd
 
       - name: 'Run Azure Functions Action'
