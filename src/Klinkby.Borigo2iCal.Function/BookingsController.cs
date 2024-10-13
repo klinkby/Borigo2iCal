@@ -28,7 +28,7 @@ public partial class BookingsController(
 
     private ContentResult MapQueryResult(BookingsResponse t)
     {
-        LogReturningBookings();
+        LogReturningBookings(t.Orders.Length);
         return new ContentResult
         {
             ContentType = "text/calendar",
@@ -39,8 +39,8 @@ public partial class BookingsController(
         };
     }
 
-    [LoggerMessage(2, LogLevel.Information, "Returning bookings")]
-    private partial void LogReturningBookings();
+    [LoggerMessage(2, LogLevel.Information, "Returning {Count} bookings")]
+    private partial void LogReturningBookings(int count);
 
     [LoggerMessage(3, LogLevel.Information, "Request starting {Id}")]
     private partial void LogRequestStarting(int id);
