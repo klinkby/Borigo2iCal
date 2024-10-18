@@ -148,8 +148,8 @@
       },
       "Klinkby.VCard": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "coo6yYeR/tJd8Ga4x1hjS0WFsDP5JWKB1wrSv7szWNKREhpcpHjitUgpfDnS0cVsJLIYmnSWH6kNJpXshHKKdw=="
+        "resolved": "3.0.1",
+        "contentHash": "fG7GKrie3GW5VjjvDpxVvOGh2Xs3Qt8tOlBvVikXStFB8GzLj6GSqyxUll5KaubFMhnObZjtxuR3vE7jHb7tdg=="
       },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
@@ -888,7 +888,7 @@
       "klinkby.borigo2ical": {
         "type": "Project",
         "dependencies": {
-          "Klinkby.VCard": "[3.0.0, )",
+          "Klinkby.VCard": "[3.0.1, )",
           "Microsoft.Extensions.Logging.Abstractions": "[8.0.2, )",
           "Microsoft.Extensions.Options": "[8.0.2, )",
           "RestSharp": "[112.1.0, )"
