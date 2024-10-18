@@ -13,8 +13,11 @@ internal static class BookingsResponseExtensions
         {
             Events = from b in bookingsResponse.Orders
                 where b.Status == "ACTIVE"
-                select new VEvent(b.Start.UtcDateTime, b.End.UtcDateTime, b.Created.UtcDateTime)
+                select new VEvent
                 {
+                    DtStart = b.Start.UtcDateTime,
+                    DtEnd = b.End.UtcDateTime,
+                    DtStamp = b.Created.UtcDateTime,
                     UId = b.Id.ToString(CultureInfo.InvariantCulture),
                     Summary = $"{bookingsResponse.Name} ({b.UserId})",
                     Description = string.Empty,

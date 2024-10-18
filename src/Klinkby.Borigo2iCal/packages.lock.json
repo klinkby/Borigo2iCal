@@ -10,9 +10,9 @@
       },
       "Klinkby.VCard": {
         "type": "Direct",
-        "requested": "[2.0.1, )",
-        "resolved": "2.0.1",
-        "contentHash": "izFYF4mAKER2zDcfn8Cwauu/bK9gri37vVNo8v4lbxvQtUk2imTOniejzVFhJcsQ2UtfvYAY/b6eqx3LTThdCw=="
+        "requested": "[3.0.0, )",
+        "resolved": "3.0.0",
+        "contentHash": "coo6yYeR/tJd8Ga4x1hjS0WFsDP5JWKB1wrSv7szWNKREhpcpHjitUgpfDnS0cVsJLIYmnSWH6kNJpXshHKKdw=="
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Direct",
