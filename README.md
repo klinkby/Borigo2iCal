@@ -6,9 +6,9 @@ integration in popular calendar apps.
 
 ## Usage
 
-After deployment the app will expose the endpoint: `https://<YOURSITE>.azurewebsites.net/api/bookings?date=2023-11-10`
+After deployment the app will expose the endpoint: `https://<YOURSITE>.azurewebsites.net/api/bookings/{facilityId}`
 
-The date parameter is optional and defaults to today's date minus 4 days.
+The facilityId parameter is required to id the HeyNabo! facility.
 The function returns a VCalendar file with the bookings from the specified date.
 
 ## Hosting
