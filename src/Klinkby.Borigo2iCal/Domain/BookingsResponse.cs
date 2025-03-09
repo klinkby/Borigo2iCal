@@ -155,6 +155,9 @@ namespace Klinkby.Borigo2iCal.Domain
 
         [JsonPropertyName("created")]
         public DateTimeOffset Created { get; set; }
+        
+        [JsonPropertyName("userComment")]
+        public string UserComment { get; set; }
     }
 
     internal partial class Welcome
@@ -162,7 +165,7 @@ namespace Klinkby.Borigo2iCal.Domain
         public static Welcome FromJson(string json) => JsonSerializer.Deserialize<Welcome>(json, Klinkby.Borigo2iCal.Domain.Converter.Settings);
     }
 
-    internal static class Serialize
+    internal static partial class Serialize
     {
         public static string ToJson(this Welcome self) => JsonSerializer.Serialize(self, Klinkby.Borigo2iCal.Domain.Converter.Settings);
     }

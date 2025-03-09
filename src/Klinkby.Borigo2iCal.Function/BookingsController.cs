@@ -1,11 +1,13 @@
-﻿using Klinkby.VCard;
+﻿using System.Diagnostics.CodeAnalysis;
+using Klinkby.VCard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Klinkby.Borigo2iCal.Func;
 
-public partial class BookingsController(
+[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Late bound")]
+internal sealed partial class BookingsController(
     IQueryHandler<BookingsQuery, VCalendar> handler,
     ILogger<BookingsController> logger)
 {
