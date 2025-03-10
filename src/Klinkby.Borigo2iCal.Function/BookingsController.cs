@@ -6,8 +6,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Klinkby.Borigo2iCal.Func;
 
-[SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Late bound")]
-internal sealed partial class BookingsController(
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Created by function runtime")]
+public sealed partial class BookingsController(
     IQueryHandler<BookingsQuery, VCalendar> handler,
     ILogger<BookingsController> logger)
 {
@@ -30,7 +30,9 @@ internal sealed partial class BookingsController(
     {
         return new ContentResult
         {
-            ContentType = "text/calendar", StatusCode = StatusCodes.Status200OK, Content = t.ToString()
+            ContentType = "text/calendar", 
+            StatusCode = StatusCodes.Status200OK, 
+            Content = t.ToString()
         };
     }
 

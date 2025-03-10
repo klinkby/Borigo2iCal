@@ -23,7 +23,7 @@ internal static class BookingsResponseExtensions
                     UId = b.Id.ToString(CultureInfo.InvariantCulture),
                     Summary = $"{bookingsResponse.Name}",
                     Description = b.UserComment,
-                    Organizer = $"{u.FirstName} {u.LastName}",
+                    Organizer = $@"CN=\""{u.FirstName} {u.LastName}\"":MAILTO:{u.Email}",
                     Location = bookingsResponse.Name
                 }
         };
