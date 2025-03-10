@@ -21,8 +21,8 @@ internal static class BookingsResponseExtensions
                     DtEnd = b.End.UtcDateTime,
                     DtStamp = b.Created.UtcDateTime,
                     UId = b.Id.ToString(CultureInfo.InvariantCulture),
-                    Summary = $"{bookingsResponse.Name}",
-                    Description = b.UserComment,
+                    Summary = $"{u.FirstName} {u.LastName} {b.UserComment}",
+                    Description = $"{u.FirstName} {u.LastName} {b.UserComment}",
                     Organizer = $"{u.FirstName} {u.LastName}",
                     Location = bookingsResponse.Name
                 }
